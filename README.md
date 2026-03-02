@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/xnovos-dev/Dynasty/main/.github/banner.png" alt="Dynasty Banner" width="100%" />
+  <img src="https://raw.githubusercontent.com/xnovos-dev/Dynasty/main/.github/static.png" alt="Dynasty Banner" width="100%" />
 </p>
 
 <h1 align="center">Dynasty</h1>
