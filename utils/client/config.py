@@ -3,10 +3,26 @@ import os
 import time
 from pathlib import Path
 from colorama import Fore, Style, init
+import base64
+import getpass
 
 init(autoreset=True)
 
 ENV_PATH = Path(".env")
+
+def mask_token_display(token: str) -> str:
+    """
+    Mask the Discord bot token for display:
+    - Keep the first segment (bot ID) visible, base64 encoded
+    - Replace the rest with stars (*), preserving length
+    """
+    parts = token.split(".")
+    if len(parts) != 3:
+        return "*" * len(token)
+    
+    bot_id_b64 = base64.b64encode(parts[0].encode()).decode()
+    hidden_rest = "*" * (len(token) - len(parts[0]))
+    return f"{bot_id_b64}{hidden_rest}"
 
 def create_env():
     print(f"{Fore.CYAN}> Dynasty Setup")
@@ -18,8 +34,8 @@ def create_env():
     prefix = input(f"{Fore.LIGHTBLUE_EX}> Enter Your Bot Prefix: {Style.RESET_ALL}").strip() or "?"
     print(f"{Fore.GREEN}> Saved Bot Prefix: {prefix}\n")
     
-    token = input(f"{Fore.LIGHTBLUE_EX}> Enter Your Bot Token: {Style.RESET_ALL}").strip()
-    print(f"{Fore.GREEN}> Saved Bot Token: {'*' * 6 + token[-4:]}")
+    token = getpass.getpass(f"{Fore.LIGHTBLUE_EX}> Enter Your Bot Token: {Style.RESET_ALL}").strip()
+    print(f"{Fore.GREEN}> Saved Bot Token: {mask_token_display(token)}")
     
     with ENV_PATH.open("w") as f:
         f.write(f'BOT_PREFIX="{prefix}"\n')
