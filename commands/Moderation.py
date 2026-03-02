@@ -610,6 +610,251 @@ class Moderation(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
+    @Moderation.command(
+        name="timeout",
+        description="Timeout a member"
+    )
+    @app_commands.describe(member="The member to timeout", duration="Duration of the timeout", reason="Reason for the timeout")
+    @app_commands.choices(duration=[
+        app_commands.Choice[str](name="5 Minutes", value="5m"),
+        app_commands.Choice[str](name="10 Minutes", value="10m"),
+        app_commands.Choice[str](name="30 Minutes", value="30m"),
+        app_commands.Choice[str](name="1 Hour", value="1h"),
+        app_commands.Choice[str](name="6 Hours", value="6h"),
+        app_commands.Choice[str](name="12 Hours", value="12h"),
+        app_commands.Choice[str](name="1 Day", value="1d"),
+        app_commands.Choice[str](name="3 Days", value="3d"),
+        app_commands.Choice[str](name="7 Days", value="7d")
+    ])
+    async def timeout(self, interaction: discord.Interaction, member: discord.Member, duration: str = "10m", reason: str = None):
+        user = interaction.user
+        bot_member = interaction.guild.me
+        
+        if not user.guild_permissions.moderate_members:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **You are missing the** ``moderate_members`` **permission**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if not bot_member.guild_permissions.moderate_members:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **I am missing the** ``moderate_members`` **permission**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if member == user:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **You cannot timeout yourself**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if member == bot_member:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **You cannot timeout the bot**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if member == interaction.guild.owner:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **You cannot timeout the server owner**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if member.top_role >= user.top_role and user != interaction.guild.owner:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **You cannot timeout a member with an equal or higher role**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if member.top_role >= bot_member.top_role:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **I cannot timeout a member with a higher role than me**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        duration_map = {
+            "5m": 5,
+            "10m": 10,
+            "30m": 30,
+            "1h": 60,
+            "6h": 360,
+            "12h": 720,
+            "1d": 1440,
+            "3d": 4320,
+            "7d": 10080
+        }
+        
+        timeout_duration = duration_map.get(duration, 10)
+        from datetime import timedelta
+        timeout_until = datetime.now() + timedelta(minutes=timeout_duration)
+        
+        await member.timeout(timeout_until, reason=reason)
+        
+        embed = discord.Embed(
+            title="<:stats:1473332978074648638> | Dynasty | Member Timed Out",
+            description=f"> **{member}** has been timed out by **{user}**\n> **Duration:** `{duration}`\n> Reason: ``{reason or 'No reason provided'}``",
+            color=100,
+            timestamp=datetime.now()
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @Moderation.command(
+        name="untimeout",
+        description="Remove timeout from a member"
+    )
+    @app_commands.describe(member="The member to remove timeout from", reason="Reason for removing the timeout")
+    async def untimeout(self, interaction: discord.Interaction, member: discord.Member, reason: str = None):
+        user = interaction.user
+        bot_member = interaction.guild.me
+        
+        if not user.guild_permissions.moderate_members:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **You are missing the** ``moderate_members`` **permission**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if not bot_member.guild_permissions.moderate_members:
+            embed = discord.Embed(
+                title="Dynasty | Permission Denied",
+                description="> **I am missing the** ``moderate_members`` **permission**",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        if member.is_timed_out() is False:
+            embed = discord.Embed(
+                title="Dynasty | Error",
+                description=f"> **{member}** is not timed out",
+                color=100,
+                timestamp=datetime.now()
+            )
+            embed.set_author(
+                name=f"{interaction.guild.name} ( ID: {interaction.guild.id} )",
+                icon_url=interaction.guild.icon.url if interaction.guild.icon else None
+            )
+            embed.set_footer(
+                text=f"Requested by {user.name} ( ID: {user.id} )",
+                icon_url=user.display_avatar.url if user.display_avatar else None
+            )
+            await interaction.response.send_message(embed=embed)
+            return
+        
+        await member.timeout(None, reason=reason)
+        
+        embed = discord.Embed(
+            title="<:stats:1473332978074648638> | Dynasty | Timeout Removed",
+            description=f"> **Timeout removed from** **{member}** by **{user}**\n> Reason: ``{reason or 'No reason provided'}``",
+            color=100,
+            timestamp=datetime.now()
+        )
+        await interaction.response.send_message(embed=embed)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Moderation(bot))
