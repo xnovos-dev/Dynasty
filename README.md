@@ -20,14 +20,13 @@
 
 ## ✨ Features
 
-- Anti Nuke *(WIP)*
-- Anti Raid *(WIP)*
-- Economy *(WIP)*
+- Anti Nuke
+- Anti Raid
+- Economy
 - Fun
 - Join To Create
-- Logging *(WIP)*
+- Logging
 - Moderation
-- Music *(Experimental)*
 - Owner
 - Utility
 - Welcomer
@@ -40,4 +39,4 @@
 git clone https://github.com/xnovos-dev/Dynasty.git
 cd Dynasty
 pip install -r requirements.txt
-python bot.py
+python main.py
