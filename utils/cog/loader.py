@@ -1,42 +1,68 @@
 # utils/cog/loader.py
 import os
 import importlib
-from discord.ext import commands
+import traceback
+import sys
+from colorama import Fore, Style, init
 
-async def load(bot: commands.Bot, base_path="."):
-    """
-    Recursively loads all command and event Cogs
-    
-    Example structure:
-    main.py
-    Commands/
-        Utility/ping.py
-    Events/
-        Client/on_ready.py
-    """
-    loaded = []
-    failed = []
+sys.dont_write_bytecode = True
+init(autoreset=True)
 
-    for root, dirs, files in os.walk(base_path):
-        if any(part.startswith(".") for part in root.split(os.sep)) or "utils" in root:
-            continue
+async def load_commands(bot):
+    loaded = 0
+    failed = 0
 
+    for root, _, files in os.walk("commands"):
         for file in files:
-            if file.endswith(".py") and not file.startswith("__"):
-                relative_path = os.path.relpath(os.path.join(root, file), ".")
-                module_path = relative_path.replace(os.sep, ".")[:-3]
+            if not file.endswith(".py") or file.startswith("_"):
+                continue
 
-                try:
-                    module = importlib.import_module(module_path)
+            file_path = os.path.join(root, file)
+            module_path = file_path.replace(os.sep, ".")[:-3]
 
-                    for attr in dir(module):
-                        obj = getattr(module, attr)
-                        if isinstance(obj, type) and issubclass(obj, commands.Cog):
-                            cog_instance = obj(bot)
-                            await bot.add_cog(cog_instance)
-                            loaded.append(module_path)
-                            break
-                except Exception as e:
-                    failed.append((module_path, e))
+            try:
+                module = importlib.import_module(module_path)
 
-    return loaded, failed
+                if getattr(module, "COG", False) is True:
+                    await bot.load_extension(module_path)
+                    print(f"{Fore.CYAN}[INFO] {Fore.LIGHTBLACK_EX}- Loaded command: {Fore.GREEN}{module_path}")
+                    loaded += 1
+                else:
+                    print(f"{Fore.CYAN}[INFO] {Fore.LIGHTBLACK_EX}- Skipped (COG not True): {Fore.LIGHTBLUE_EX}{module_path}")
+
+            except Exception:
+                print(f"{Fore.RED}[ERROR] Failed to load command: {Fore.LIGHTBLUE_EX}{module_path}")
+                print(Fore.RED + traceback.format_exc())
+                failed += 1
+
+    print(f"{Fore.CYAN}[INFO] {Fore.LIGHTBLACK_EX}- Commands Loaded: {Fore.GREEN}{loaded} | Failed: {Fore.RED}{failed}")
+
+
+async def load_events(bot):
+    loaded = 0
+    failed = 0
+
+    for root, _, files in os.walk("events"):
+        for file in files:
+            if not file.endswith(".py") or file.startswith("_"):
+                continue
+
+            file_path = os.path.join(root, file)
+            module_path = file_path.replace(os.sep, ".")[:-3]
+
+            try:
+                module = importlib.import_module(module_path)
+
+                if getattr(module, "COG", False) is True:
+                    await bot.load_extension(module_path)
+                    print(f"{Fore.CYAN}[INFO] {Fore.LIGHTBLACK_EX}- Loaded event: {Fore.GREEN}{module_path}")
+                    loaded += 1
+                else:
+                    print(f"{Fore.CYAN}[INFO] {Fore.LIGHTBLACK_EX}- Skipped (COG not True): {Fore.LIGHTBLUE_EX}{module_path}")
+
+            except Exception:
+                print(f"{Fore.RED}[ERROR] Failed to load event: {Fore.LIGHTBLUE_EX}{module_path}")
+                print(Fore.RED + traceback.format_exc())
+                failed += 1
+
+    print(f"{Fore.CYAN}[INFO] {Fore.LIGHTBLACK_EX}- Events Loaded: {Fore.GREEN}{loaded} | Failed: {Fore.RED}{failed}")
