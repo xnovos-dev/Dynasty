@@ -1,19 +1,19 @@
 <p align="center">
-  <img src="https://your-banner-image-url.com/banner.png" alt="Dynasty Bot Banner" width="100%" />
+  <img src="https://raw.githubusercontent.com/xnovos-dev/Dynasty/main/.github/banner.png" alt="Dynasty Banner" width="100%" />
 </p>
 
 <h1 align="center">Dynasty</h1>
 
 <p align="center">
-  A modern, modular Discord bot built with discord.py.
+  Modern • Modular • Scalable Discord Bot
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/license/yourusername/dynasty-bot?style=for-the-badge">
-  <img src="https://img.shields.io/github/stars/yourusername/dynasty-bot?style=for-the-badge">
-  <img src="https://img.shields.io/github/issues/yourusername/dynasty-bot?style=for-the-badge">
-  <img src="https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge">
-  <img src="https://img.shields.io/badge/discord.py-2.x-5865F2?style=for-the-badge">
+  <img src="https://img.shields.io/github/license/xnovos-dev/Dynasty?style=for-the-badge">
+  <img src="https://img.shields.io/github/stars/xnovos-dev/Dynasty?style=for-the-badge">
+  <img src="https://img.shields.io/github/issues/xnovos-dev/Dynasty?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/discord.py-2.7.0-5865F2?style=for-the-badge">
 </p>
 
 ---
@@ -37,7 +37,7 @@
 ## 🚀 Setup
 
 ```bash
-git clone https://github.com/yourusername/dynasty-bot.git
-cd dynasty-bot
+git clone https://github.com/xnovos-dev/Dynasty.git
+cd Dynasty
 pip install -r requirements.txt
 python bot.py
