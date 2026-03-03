@@ -10,7 +10,8 @@ class Client(commands.AutoShardedBot):
         super().__init__(
             command_prefix=BOT_PREFIX,
             intents=discord.Intents.all(),
-            help_command=None
+            help_command=None,
+            owner_id=1435902164642955318
         )
 
     async def setup_hook(self):
@@ -18,4 +19,4 @@ class Client(commands.AutoShardedBot):
         await load_events(self)
 
 bot = Client()
-bot.run(BOT_TOKEN, log_handler=None)
+bot.run(BOT_TOKEN)

@@ -15,7 +15,7 @@ class Utility(commands.Cog):
     @Utility.command(name="ping", description="Check bot latency")
     async def ping(self, interaction: discord.Interaction):
         embed = discord.Embed(
-            title="<:stats:1473332978074648638> | Dynasty | Latency",
+            title="<:wrench:1473326965594521620> | Dynasty | Latency",
             description=f"> **API Latency:** `{round(self.bot.latency * 1000)}ms`",
             color=100
         )
@@ -210,7 +210,7 @@ class Utility(commands.Cog):
         minutes, seconds = divmod(remainder, 60)
         
         embed = discord.Embed(
-            title="<:stats:1473332978074648638> | Dynasty | Uptime",
+            title="<:wrench:1473326965594521620> | Dynasty | Uptime",
             description=f"> **Uptime:** `{hours}h {minutes}m {seconds}s`",
             color=100
         )
@@ -222,7 +222,7 @@ class Utility(commands.Cog):
         
         if not guild.emojis:
             embed = discord.Embed(
-                title="<:stats:1473332978074648638> | Dynasty | Emotes",
+                title="<:wrench:1473326965594521620> | Dynasty | Emotes",
                 description="> **This server has no custom emotes**",
                 color=100
             )
@@ -248,56 +248,6 @@ class Utility(commands.Cog):
             color=100
         )
         await interaction.response.send_message(embed=embed)
-
-    @Utility.command(name="steal", description="Add an emote to the server")
-    @app_commands.describe(emoji="The emoji to add (can be a custom emoji)", name="The name for the emote")
-    async def steal(self, interaction: discord.Interaction, emoji: str, name: str):
-        if not interaction.user.guild_permissions.manage_emojis:
-            embed = discord.Embed(
-                title="<:stats:1473332978074648638> | Dynasty | Steal Emote Error",
-                description="> **You need the ``Manage Emojis`` permission to use this command!**",
-                color=100
-            )
-            await interaction.response.send_message(embed=embed)
-            return
-        
-        if emoji.startswith("<") and emoji.endswith(">"):
-            animated = emoji.startswith("<a:")
-            emoji_id = emoji.split(":")[-1].rstrip(">")
-            url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
-        else:
-            url = None
-        
-        try:
-            if url:
-                response = await self.bot.session.get(url)
-                image = await response.read()
-            else:
-                embed = discord.Embed(
-                    title="<:stats:1473332978074648638> | Dynasty | Steal Emote",
-                    description="> **Please provide a custom emoji to steal**",
-                    color=100
-                )
-                await interaction.response.send_message(embed=embed)
-                return
-            
-            guild = interaction.guild
-            await guild.create_custom_emoji(name=name, image=image)
-            
-            embed = discord.Embed(
-                title="<:stats:1473332978074648638> | Dynasty | Steal Emote",
-                description=f"> **Added emote:** `{name}`\n> **Emoji:** {emoji}",
-                color=100
-            )
-            await interaction.response.send_message(embed=embed)
-        except Exception as e:
-            embed = discord.Embed(
-                title="<:stats:1473332978074648638> | Dynasty | Steal Emote Error",
-                description=f"> **Failed to add emote:** {str(e)}",
-                color=100
-            )
-            await interaction.response.send_message(embed=embed)
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Utility(bot))

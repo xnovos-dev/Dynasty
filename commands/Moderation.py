@@ -1,7 +1,7 @@
 from discord.ext import commands
 from discord import app_commands
 import discord
-from datetime import datetime
+from datetime import datetime, timedelta
 
 COG = True
 
@@ -16,7 +16,7 @@ class Moderation(commands.Cog):
     async def purge(self, interaction: discord.Interaction, amount: int = 5):
         if not interaction.user.guild_permissions.manage_messages:
             embed = discord.Embed(
-                title="<:stats:1473332978074648638> | Dynasty | Purge Error",
+                title="<:staff:1473324429382516777> | Dynasty | Purge Error",
                 description="> **You need the ``Manage Messages`` permission to use this command!**",
                 color=100
             )
@@ -31,7 +31,7 @@ class Moderation(commands.Cog):
         deleted = await interaction.channel.purge(limit=amount + 1)
         
         embed = discord.Embed(
-            title="<:stats:1473332978074648638> | Dynasty | Purge",
+            title="<:staff:1473324429382516777> | Dynasty | Purge",
             description=f"> **Deleted:** `{len(deleted)}` messages",
             color=100
         )
@@ -42,7 +42,7 @@ class Moderation(commands.Cog):
     async def lock(self, interaction: discord.Interaction, channel: discord.TextChannel = None):
         if not interaction.user.guild_permissions.manage_channels:
             embed = discord.Embed(
-                title="<:stats:1473332978074648638> | Dynasty | Lock Error",
+                title="<:staff:1473324429382516777> | Dynasty | Lock Error",
                 description="> **You need the ``Manage Channels`` permission to use this command!**",
                 color=100
             )
@@ -63,7 +63,7 @@ class Moderation(commands.Cog):
         await channel.edit(overwrites=overwrites)
         
         embed = discord.Embed(
-            title="<:stats:1473332978074648638> | Dynasty | Lock",
+            title="<:staff:1473324429382516777> | Dynasty | Lock",
             description=f"> **Channel:** {channel.mention}\n> **Status:** Locked 🔒",
             color=100
         )
@@ -74,7 +74,7 @@ class Moderation(commands.Cog):
     async def unlock(self, interaction: discord.Interaction, channel: discord.TextChannel = None):
         if not interaction.user.guild_permissions.manage_channels:
             embed = discord.Embed(
-                title="<:stats:1473332978074648638> | Dynasty | Unlock Error",
+                title="<:staff:1473324429382516777> | Dynasty | Unlock Error",
                 description="> **You need the ``Manage Channels`` permission to use this command!**",
                 color=100
             )
@@ -95,7 +95,7 @@ class Moderation(commands.Cog):
         await channel.edit(overwrites=overwrites)
         
         embed = discord.Embed(
-            title="<:stats:1473332978074648638> | Dynasty | Unlock",
+            title="<:staff:1473324429382516777> | Dynasty | Unlock",
             description=f"> **Channel:** {channel.mention}\n> **Status:** Unlocked 🔓",
             color=100
         )
@@ -239,7 +239,7 @@ class Moderation(commands.Cog):
         await member.ban(reason=reason)
         
         embed = discord.Embed(
-            title="<:ban_hammer:1473324467072667822> | Dynasty | Member Banned",
+            title="<:staff:1473324429382516777> | Dynasty | Member Banned",
             description=f"> **{member}** has been banned by **{user}**\n> Reason: ``{reason or 'No reason provided'}``",
             color=100,
             timestamp=datetime.now()
@@ -312,7 +312,7 @@ class Moderation(commands.Cog):
             return
         
         embed = discord.Embed(
-            title="<:ban_hammer:1473324467072667822> | Dynasty | Member Unbanned",
+            title="<:staff:1473324429382516777> | Dynasty | Member Unbanned",
             description=f"> **{user}** has been unbanned by **{author}**\n> Reason: ``{reason or 'No reason provided'}``",
             color=100,
             timestamp=datetime.now()
@@ -457,7 +457,7 @@ class Moderation(commands.Cog):
         await member.kick(reason=reason)
         
         embed = discord.Embed(
-            title="<:kick:1473327064458330237> | Dynasty | Member Kicked",
+            title="<:staff:1473324429382516777> | Dynasty | Member Kicked",
             description=f"> **{member}** has been kicked by **{user}**\n> Reason: ``{reason or 'No reason provided'}``",
             color=100,
             timestamp=datetime.now()
@@ -603,7 +603,7 @@ class Moderation(commands.Cog):
         await member.unban(reason=reason)
         
         embed = discord.Embed(
-            title="<:ban_hammer:1473324467072667822> | Dynasty | Member Softbanned",
+            title="<:staff:1473324429382516777> | Dynasty | Member Softbanned",
             description=f"> **{member}** has been softbanned by **{user}**\n> Reason: ``{reason or 'No reason provided'}``\n> (Messages from the last 7 days have been deleted)",
             color=100,
             timestamp=datetime.now()
@@ -769,13 +769,12 @@ class Moderation(commands.Cog):
         }
         
         timeout_duration = duration_map.get(duration, 10)
-        from datetime import timedelta
         timeout_until = datetime.now() + timedelta(minutes=timeout_duration)
         
         await member.timeout(timeout_until, reason=reason)
         
         embed = discord.Embed(
-            title="<:stats:1473332978074648638> | Dynasty | Member Timed Out",
+            title="<:staff:1473324429382516777> | Dynasty | Member Timed Out",
             description=f"> **{member}** has been timed out by **{user}**\n> **Duration:** `{duration}`\n> Reason: ``{reason or 'No reason provided'}``",
             color=100,
             timestamp=datetime.now()
@@ -848,7 +847,7 @@ class Moderation(commands.Cog):
         await member.timeout(None, reason=reason)
         
         embed = discord.Embed(
-            title="<:stats:1473332978074648638> | Dynasty | Timeout Removed",
+            title="<:staff:1473324429382516777> | Dynasty | Timeout Removed",
             description=f"> **Timeout removed from** **{member}** by **{user}**\n> Reason: ``{reason or 'No reason provided'}``",
             color=100,
             timestamp=datetime.now()
