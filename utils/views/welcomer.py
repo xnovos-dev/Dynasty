@@ -61,9 +61,9 @@ class WelcomerPanel(ui.LayoutView):
 
         row1 = ui.ActionRow()
 
-        set_channel = ui.Button(label="Set Channel", style=discord.ButtonStyle.primary)
-        set_role = ui.Button(label="Set Auto Role", style=discord.ButtonStyle.primary)
-        edit_embed = ui.Button(label="Edit Embed", style=discord.ButtonStyle.primary)
+        set_channel = ui.Button(label="Set Channel", style=discord.ButtonStyle.secondary)
+        set_role = ui.Button(label="Set Auto Role", style=discord.ButtonStyle.secondary)
+        edit_embed = ui.Button(label="Edit Embed", style=discord.ButtonStyle.secondary)
 
         set_channel.callback = self.set_channel_callback
         set_role.callback = self.set_role_callback
@@ -74,8 +74,8 @@ class WelcomerPanel(ui.LayoutView):
         row1.add_item(edit_embed)
 
         row2 = ui.ActionRow()
-        enable_btn = ui.Button(label="Enable", style=discord.ButtonStyle.success)
-        disable_btn = ui.Button(label="Disable", style=discord.ButtonStyle.danger)
+        enable_btn = ui.Button(label="Enable", style=discord.ButtonStyle.secondary)
+        disable_btn = ui.Button(label="Disable", style=discord.ButtonStyle.secondary)
         preview_btn = ui.Button(label="Preview Embed", style=discord.ButtonStyle.secondary)
 
         enable_btn.callback = self.enable_callback
