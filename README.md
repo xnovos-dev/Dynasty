@@ -23,13 +23,13 @@
 - Anti Nuke
 - Anti Raid
 - Economy
-- Fun
+- Fun [STABLE] [RELEASED]
 - Join To Create
 - Logging
-- Moderation
+- Moderation [STABLE] [RELEASED]
 - Owner
-- Utility
-- Welcomer
+- Utility [STABLE] [RELEASED]
+- Welcomer [STABLE] [RELEASED]
 
 ---
 
