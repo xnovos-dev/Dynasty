@@ -95,18 +95,39 @@ class WelcomerPanel(ui.LayoutView):
         return interaction.user.id == self.author.id
 
     async def enable_callback(self, interaction):
+        if not interaction.user.guild_permissions.manage_guild:
+            embed = discord.Embed(
+                title="Dynasty | Error",
+                description="> **You need** ``manage_server`` **permission to use this**",
+                color=0x64
+            )
+            return await interaction.response.send_message(embed=embed)
         await db.set_welcomer_status(self.guild.id, "enabled")
         self.data["enabled"] = True
         self.build_view()
         await interaction.response.edit_message(view=self)
 
     async def disable_callback(self, interaction):
+        if not interaction.user.guild_permissions.manage_guild:
+            embed = discord.Embed(
+                title="Dynasty | Error",
+                description="> **You need** ``manage_server`` **permission to use this**",
+                color=0x64
+            )
+            return await interaction.response.send_message(embed=embed)
         await db.set_welcomer_status(self.guild.id, "disabled")
         self.data["enabled"] = False
         self.build_view()
         await interaction.response.edit_message(view=self)
 
     async def set_channel_callback(self, interaction):
+        if not interaction.user.guild_permissions.manage_guild:
+            embed = discord.Embed(
+                title="Dynasty | Error",
+                description="> **You need** ``manage_server`` **permission to use this**",
+                color=0x64
+            )
+            return await interaction.response.send_message(embed=embed)
         panel = self
 
         class ChannelModal(ui.Modal, title="Set Welcomer Channel"):
@@ -128,6 +149,13 @@ class WelcomerPanel(ui.LayoutView):
         await interaction.response.send_modal(ChannelModal())
 
     async def set_role_callback(self, interaction):
+        if not interaction.user.guild_permissions.manage_guild:
+            embed = discord.Embed(
+                title="Dynasty | Error",
+                description="> **You need** ``manage_server`` **permission to use this**",
+                color=0x64
+            )
+            return await interaction.response.send_message(embed=embed)
         panel = self
 
         class RoleModal(ui.Modal, title="Set Auto Role"):
@@ -149,6 +177,13 @@ class WelcomerPanel(ui.LayoutView):
         await interaction.response.send_modal(RoleModal())
 
     async def edit_embed_callback(self, interaction):
+        if not interaction.user.guild_permissions.manage_guild:
+            embed = discord.Embed(
+                title="Dynasty | Error",
+                description="> **You need** ``manage_server`` **permission to use this**",
+                color=0x64
+            )
+            return await interaction.response.send_message(embed=embed)
         panel = self
 
         class EmbedModal(ui.Modal, title="Edit Welcome Embed"):
@@ -181,6 +216,13 @@ class WelcomerPanel(ui.LayoutView):
         await interaction.response.send_modal(EmbedModal())
 
     async def preview_callback(self, interaction):
+        if not interaction.user.guild_permissions.manage_guild:
+            embed = discord.Embed(
+                title="Dynasty | Error",
+                description="> **You need** ``manage_server`` **permission to use this**",
+                color=0x64
+            )
+            return await interaction.response.send_message(embed=embed)
         embed_data = self.data.get("embed") or {}
 
         title = self.parse_variables(embed_data.get("title"), interaction.user)
