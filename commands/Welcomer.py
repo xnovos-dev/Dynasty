@@ -32,7 +32,7 @@ class Welcomer(commands.Cog):
         await db.ensure_guild_exists(interaction.guild.id)
         view = WelcomerPanel(self.bot, interaction.guild, interaction.user)
         await view.setup()
-        await interaction.response.send_message(view=view, ephemeral=True)
+        await interaction.response.send_message(view=view)
 
     @Welcomer.command(name="enable", description="Enable the welcomer")
     async def enable(self, interaction: discord.Interaction):
