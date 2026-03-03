@@ -15,7 +15,9 @@ class Welcomer(commands.Cog):
     async def cog_load(self):
         await db.initialize_welcomer_table()
 
-    @app_commands.command(name="welcomer")
+    Welcomer = app_commands.Group(name="welcomer", description="Welcomer commands")
+
+    @Welcomer.command(name="panel", description="Shows the welcomer panel for configurating the welcomer")
     async def welcomer(self, interaction: discord.Interaction):
         await db.ensure_guild_exists(interaction.guild.id)
         view = WelcomerPanel(self.bot, interaction.guild, interaction.user)
