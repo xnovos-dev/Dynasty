@@ -5,7 +5,7 @@ from utils.db.functions import welcomer as db
 COG = True
 
 
-class Welcomer(commands.Cog):
+class WelcomerEvent(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -67,4 +67,4 @@ class Welcomer(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Welcomer(bot))
+    await bot.add_cog(WelcomerEvent(bot))
