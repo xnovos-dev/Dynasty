@@ -196,16 +196,19 @@ class WelcomerPanel(ui.LayoutView):
             async def on_submit(modal_self, modal_interaction: discord.Interaction):
                 embed_data = panel.data.get("embed") or {}
 
-                embed_data["title"] = modal_self.embed_title.value
-                embed_data["description"] = modal_self.description.value
-                embed_data["author"] = modal_self.author.value
-                embed_data["footer"] = modal_self.footer.value
-
+                if modal_self.embed_title.value:
+                    embed_data["title"] = modal_self.embed_title.value
+                if modal_self.description.value:
+                    embed_data["description"] = modal_self.description.value
+                if modal_self.author.value:
+                    embed_data["author"] = modal_self.author.value
+                if modal_self.footer.value:
+                    embed_data["footer"] = modal_self.footer.value
                 if modal_self.color.value:
                     try:
                         embed_data["color"] = int(modal_self.color.value.replace("#", ""), 16)
                     except:
-                        embed_data["color"] = 0x5865F2
+                        pass
 
                 await db.update_embed(panel.guild.id, embed_data)
 
