@@ -5,12 +5,12 @@ from utils.db.functions import welcomer as db
 COG = True
 
 
-class WelcomerEvents(commands.Cog):
+class WelcomerEvent(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-    def parse_variables(self, text: str, guild: discord.Guild, member: discord.Member):
+    def parse_variables(self, text, guild, member):
         if not text:
             return text
         text = text.replace("{user.mention}", member.mention)
@@ -21,7 +21,7 @@ class WelcomerEvents(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        settings = db.get_settings(member.guild.id)
+        settings = await db.get_settings(member.guild.id)
         if not settings:
             return
 
@@ -46,22 +46,17 @@ class WelcomerEvents(commands.Cog):
 
         embed_data = settings.get("embed") or {}
 
-        title = self.parse_variables(embed_data.get("title"), member.guild, member)
-        description = self.parse_variables(embed_data.get("description"), member.guild, member)
-        author_text = self.parse_variables(embed_data.get("author"), member.guild, member)
-        footer_text = self.parse_variables(embed_data.get("footer"), member.guild, member)
-
         embed = discord.Embed(
-            title=title,
-            description=description,
+            title=self.parse_variables(embed_data.get("title"), member.guild, member),
+            description=self.parse_variables(embed_data.get("description"), member.guild, member),
             color=embed_data.get("color", 0x5865F2)
         )
 
-        if author_text:
-            embed.set_author(name=author_text)
+        if embed_data.get("author"):
+            embed.set_author(name=self.parse_variables(embed_data.get("author"), member.guild, member))
 
-        if footer_text:
-            embed.set_footer(text=footer_text)
+        if embed_data.get("footer"):
+            embed.set_footer(text=self.parse_variables(embed_data.get("footer"), member.guild, member))
 
         embed.timestamp = discord.utils.utcnow()
 
@@ -72,4 +67,4 @@ class WelcomerEvents(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(WelcomerEvents(bot))
+    await bot.add_cog(WelcomerEvent(bot))

@@ -7,7 +7,7 @@ from utils.db.functions import welcomer as db
 COG = True
 
 
-class WelcomerPanelCog(commands.Cog):
+class Welcomer(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -21,4 +21,4 @@ class WelcomerPanelCog(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(WelcomerPanelCog(bot))
+    await bot.add_cog(Welcomer(bot))
