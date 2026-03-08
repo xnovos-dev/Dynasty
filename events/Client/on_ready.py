@@ -4,11 +4,13 @@ from colorama import Fore, Style, init
 from datetime import datetime, timezone
 import json
 import os
+import math
 
 init(autoreset=True)
 COG = True
 
 restart_channel_ID = 1479724097783992351
+status_channel_ID = 1479723906800680992
 UPTIME_FILE = "uptime.json"
 
 
@@ -17,10 +19,13 @@ class OnReady(commands.Cog):
         self.bot = bot
         self.start_time = datetime.now(timezone.utc)
         self.sent_restart_embed = False
+
         self.save_uptime.start()
+        self.update_status.start()
 
     def cog_unload(self):
         self.save_uptime.cancel()
+        self.update_status.cancel()
 
     @tasks.loop(seconds=30)
     async def save_uptime(self):
@@ -46,6 +51,47 @@ class OnReady(commands.Cog):
         minutes, seconds = divmod(seconds, 60)
 
         return f"{days}d {hours}h {minutes}m {seconds}s"
+
+    def get_current_uptime(self):
+        uptime = datetime.now(timezone.utc) - self.start_time
+
+        seconds = int(uptime.total_seconds())
+        days, seconds = divmod(seconds, 86400)
+        hours, seconds = divmod(seconds, 3600)
+        minutes, seconds = divmod(seconds, 60)
+
+        return f"{days}d {hours}h {minutes}m {seconds}s"
+
+    @tasks.loop(seconds=30)
+    async def update_status(self):
+        channel = self.bot.get_channel(status_channel_ID)
+        if channel is None:
+            channel = await self.bot.fetch_channel(status_channel_ID)
+
+        uptime = self.get_current_uptime()
+
+        lat = self.bot.latency
+        latency = "N/A" if math.isnan(lat) else f"{round(lat * 1000)}ms"
+
+        embed = discord.Embed(
+            title="Dynasty | Bot Status",
+            description=f"> **Current Uptime:** ``{uptime}``\n> **Latency:** ``{latency}``",
+            color=100,
+            timestamp=datetime.now(timezone.utc)
+        )
+
+        embed.set_footer(text="Dynasty | Live Status")
+
+        try:
+            await channel.purge(limit=10)
+        except:
+            pass
+
+        await channel.send(embed=embed)
+
+    @update_status.before_loop
+    async def before_update_status(self):
+        await self.bot.wait_until_ready()
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -75,13 +121,17 @@ class OnReady(commands.Cog):
 
         previous_uptime = self.get_previous_uptime()
 
+        lat = self.bot.latency
+        latency = "N/A" if math.isnan(lat) else f"{round(lat * 1000)}ms"
+
         embed = discord.Embed(
             title="Dynasty | Bot Restarted",
-            description=f"> **Uptime:** {previous_uptime}\n> **Latency:** {round(self.bot.latency * 1000)} ms",
+            description=f"> **Uptime:** ``{previous_uptime}``\n> **Latency:** ``{latency}``",
             color=100,
             timestamp=datetime.now(timezone.utc)
         )
-        embed.set_footer(text=f"Dynasty | Restart Notifier")
+
+        embed.set_footer(text="Dynasty | Restart Notifier")
 
         await channel.send(embed=embed)
 
